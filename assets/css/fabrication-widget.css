@@ -1,0 +1,722 @@
+/* ==========================================================================
+   MW Custom Tab for Elementor — fabrication-widget.css
+   Version: 1.0.0
+   ========================================================================== */
+
+/* --------------------------------------------------------
+   Base Reset
+   -------------------------------------------------------- */
+.mw-fabrication-widget,
+.mw-fabrication-widget *,
+.mw-fabrication-widget *::before,
+.mw-fabrication-widget *::after {
+    box-sizing: border-box;
+}
+
+.mw-fabrication-widget {
+    font-family: inherit;
+    line-height: 1.6;
+    position: relative;
+}
+
+.mw-empty-notice,
+.mw-no-items {
+    padding: 20px;
+    color: #888;
+    font-style: italic;
+    font-size: 14px;
+}
+
+/* ==========================================================================
+   STYLE ONE — Vertical Tabs + Image Panel
+   ========================================================================== */
+
+.mw-style-one-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 40px;
+    width: 100%;
+}
+
+/* --------------------------------------------------------
+   Left Navigation
+   -------------------------------------------------------- */
+.mw-tab-nav {
+    flex: 0 0 260px;
+    width: 260px;
+    padding: 10px 0;
+}
+
+.mw-tab-nav-item {
+    position: relative;
+    display: block;
+    padding: 14px 20px 14px 28px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #555555;
+    cursor: pointer;
+    transition: color 0.25s ease;
+    border-left: 3px solid transparent;
+    line-height: 1.4;
+    user-select: none;
+    outline: none;
+}
+
+.mw-tab-nav-item::before {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background-color: transparent;
+    transition: background-color 0.25s ease;
+    border-radius: 0 2px 2px 0;
+}
+
+.mw-tab-nav-item.active {
+    color: #e07b39;
+    font-weight: 600;
+}
+
+.mw-tab-nav-item.active::before {
+    background-color: #e07b39;
+}
+
+.mw-tab-nav-item:hover:not(.active) {
+    color: #e07b39;
+}
+
+.mw-tab-nav-item:focus-visible {
+    outline: 2px solid #e07b39;
+    outline-offset: 2px;
+}
+
+/* --------------------------------------------------------
+   Right Panels
+   -------------------------------------------------------- */
+.mw-tab-panels {
+    flex: 1;
+    min-width: 0;
+}
+
+.mw-tab-panel {
+    display: none;
+    animation: mwFadeIn 0.35s ease forwards;
+}
+
+.mw-tab-panel.active {
+    display: block;
+}
+
+.mw-tab-content-image {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 6px;
+    margin-bottom: 18px;
+    height: 420px;
+}
+
+.mw-tab-content-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.mw-tab-content-image:hover img {
+    transform: scale(1.02);
+}
+
+.mw-tab-content-area {
+    padding: 4px 0;
+}
+
+.mw-tab-description {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.75;
+    color: #555555;
+}
+
+.mw-tab-description p {
+    margin: 0 0 12px;
+}
+
+.mw-tab-description p:last-child {
+    margin-bottom: 0;
+}
+
+/* ==========================================================================
+   STYLE TWO — Top Category Tabs + 3-Column Layout
+   ========================================================================== */
+
+.mw-style-two-wrapper {
+    width: 100%;
+}
+
+/* --------------------------------------------------------
+   Top Horizontal Tab Bar
+   -------------------------------------------------------- */
+.mw-top-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    background-color: #1a1a1a;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    position: relative;
+}
+
+.mw-top-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.mw-top-tab-btn {
+    flex: 0 0 auto;
+    padding: 15px 22px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #aaaaaa;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.25s ease, border-color 0.25s ease;
+    outline: none;
+    letter-spacing: 0.02em;
+}
+
+.mw-top-tab-btn.active {
+    color: #e07b39;
+    border-bottom-color: #e07b39;
+}
+
+.mw-top-tab-btn:hover:not(.active) {
+    color: #e07b39;
+}
+
+.mw-top-tab-btn:focus-visible {
+    outline: 2px solid #e07b39;
+    outline-offset: -2px;
+}
+
+/* --------------------------------------------------------
+   Category Panels
+   -------------------------------------------------------- */
+.mw-cat-panels {
+    position: relative;
+}
+
+.mw-cat-panel {
+    display: none;
+}
+
+.mw-cat-panel.active {
+    display: block;
+    animation: mwFadeIn 0.3s ease forwards;
+}
+
+/* --------------------------------------------------------
+   Three Column Grid
+   -------------------------------------------------------- */
+.mw-three-col {
+    display: grid;
+    grid-template-columns: 220px 1fr 1fr;
+    min-height: 420px;
+}
+
+/* --------------------------------------------------------
+   LEFT: Sub Tabs
+   -------------------------------------------------------- */
+.mw-sub-tabs {
+    background-color: #f7f7f7;
+    border-right: 1px solid #e8e8e8;
+    padding: 20px 0;
+}
+
+.mw-sub-tab-item {
+    position: relative;
+    display: block;
+    padding: 13px 18px 13px 26px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #555555;
+    cursor: pointer;
+    transition: color 0.25s ease;
+    border-left: 3px solid transparent;
+    line-height: 1.4;
+    user-select: none;
+    outline: none;
+}
+
+.mw-sub-tab-item::before {
+    content: '';
+    position: absolute;
+    left: -3px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background-color: transparent;
+    transition: background-color 0.25s ease;
+    border-radius: 0 2px 2px 0;
+}
+
+.mw-sub-tab-item.active {
+    color: #e07b39;
+    font-weight: 600;
+}
+
+.mw-sub-tab-item.active::before {
+    background-color: #e07b39;
+}
+
+.mw-sub-tab-item:hover:not(.active) {
+    color: #e07b39;
+}
+
+.mw-sub-tab-item:focus-visible {
+    outline: 2px solid #e07b39;
+    outline-offset: 2px;
+}
+
+/* --------------------------------------------------------
+   MIDDLE: Image Column
+   -------------------------------------------------------- */
+.mw-tab-image-col {
+    position: relative;
+    overflow: hidden;
+    background: #eee;
+    min-height: 420px;
+}
+
+/* Static Images */
+.mw-static-image {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.mw-static-image.active {
+    display: block;
+    animation: mwFadeIn 0.35s ease forwards;
+}
+
+.mw-static-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.mw-placeholder-img {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 13px;
+}
+
+/* --------------------------------------------------------
+   RIGHT: Text + Button
+   -------------------------------------------------------- */
+.mw-tab-right-col {
+    position: relative;
+    min-height: 420px;
+}
+
+.mw-tab-right {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    padding: 32px 30px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+}
+
+.mw-tab-right.active {
+    display: flex;
+    animation: mwFadeIn 0.35s ease forwards;
+}
+
+.mw-item-description {
+    margin: 0 0 28px;
+    font-size: 15px;
+    line-height: 1.75;
+    color: #444444;
+    flex-shrink: 0;
+}
+
+.mw-item-description p {
+    margin: 0 0 12px;
+}
+
+.mw-item-description p:last-child {
+    margin-bottom: 0;
+}
+
+.mw-item-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    background-color: #e07b39;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 4px;
+    transition: background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+    border: none;
+    align-self: flex-start;
+    flex-shrink: 0;
+    letter-spacing: 0.02em;
+}
+
+.mw-item-btn:hover {
+    background-color: #c56020;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(224, 123, 57, 0.4);
+    text-decoration: none;
+}
+
+.mw-item-btn:focus-visible {
+    outline: 2px solid #e07b39;
+    outline-offset: 3px;
+}
+
+/* ==========================================================================
+   CAROUSEL (Swiper.js)
+   ========================================================================== */
+
+.mw-carousel-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.mw-carousel-wrapper .swiper-wrapper {
+    height: 100%;
+}
+
+.mw-carousel-wrapper .swiper-slide {
+    overflow: hidden;
+}
+
+.mw-carousel-wrapper .swiper-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.mw-carousel-wrapper .swiper-button-prev,
+.mw-carousel-wrapper .swiper-button-next {
+    color: #e07b39;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: background 0.2s ease;
+}
+
+.mw-carousel-wrapper .swiper-button-prev:hover,
+.mw-carousel-wrapper .swiper-button-next:hover {
+    background: rgba(255,255,255,1);
+}
+
+.mw-carousel-wrapper .swiper-button-prev::after,
+.mw-carousel-wrapper .swiper-button-next::after {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.mw-carousel-wrapper .swiper-pagination {
+    bottom: 12px;
+}
+
+.mw-carousel-wrapper .swiper-pagination-bullet {
+    background: rgba(255,255,255,0.6);
+    opacity: 1;
+    width: 8px;
+    height: 8px;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.mw-carousel-wrapper .swiper-pagination-bullet-active {
+    background: #e07b39;
+    transform: scale(1.3);
+}
+
+/* ==========================================================================
+   ANIMATIONS
+   ========================================================================== */
+
+@keyframes mwFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE — TABLET (max-width: 1024px)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    .mw-style-one-wrapper {
+        gap: 28px;
+    }
+
+    .mw-tab-nav {
+        flex: 0 0 200px;
+        width: 200px;
+    }
+
+    .mw-three-col {
+        grid-template-columns: 180px 1fr 1fr;
+    }
+
+    .mw-tab-nav-item {
+        font-size: 15px;
+        padding: 12px 16px 12px 22px;
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE — TABLET (max-width: 768px)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+
+    /* ---- Style One ---- */
+    .mw-style-one-wrapper {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .mw-tab-nav {
+        flex: none;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        border-bottom: 2px solid #e8e8e8;
+        padding: 0;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .mw-tab-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .mw-tab-nav-item {
+        flex: 0 0 auto;
+        padding: 10px 18px;
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+        font-size: 14px;
+    }
+
+    .mw-tab-nav-item::before {
+        display: none;
+    }
+
+    .mw-tab-nav-item.active {
+        border-bottom-color: #e07b39;
+    }
+
+    .mw-tab-panels {
+        margin-top: 20px;
+    }
+
+    .mw-tab-content-image {
+        height: 280px;
+    }
+
+    /* ---- Style Two ---- */
+    .mw-three-col {
+        grid-template-columns: 160px 1fr;
+        grid-template-rows: 1fr auto;
+    }
+
+    .mw-tab-right-col {
+        grid-column: 1 / -1;
+        min-height: auto;
+        border-top: 1px solid #e8e8e8;
+    }
+
+    .mw-tab-right {
+        position: relative;
+        height: auto;
+        padding: 24px 20px;
+    }
+
+    .mw-tab-image-col {
+        min-height: 280px;
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE — MOBILE (max-width: 576px)
+   ========================================================================== */
+
+@media (max-width: 576px) {
+
+    /* ---- Style One — Accordion ---- */
+    .mw-tab-nav {
+        flex-direction: column;
+        overflow-x: visible;
+        border-bottom: none;
+        border: 1px solid #e8e8e8;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .mw-tab-nav-item {
+        flex: none;
+        padding: 13px 18px 13px 24px;
+        border-bottom: 1px solid #e8e8e8;
+        border-left: 3px solid transparent;
+        white-space: normal;
+        font-size: 14px;
+    }
+
+    .mw-tab-nav-item:last-child {
+        border-bottom: none;
+    }
+
+    .mw-tab-nav-item::before {
+        display: block;
+    }
+
+    .mw-tab-nav-item.active {
+        border-bottom-color: #e8e8e8;
+        border-left-color: #e07b39;
+    }
+
+    .mw-tab-content-image {
+        height: 220px;
+    }
+
+    .mw-tab-description {
+        font-size: 14px;
+    }
+
+    /* ---- Style Two — Mobile Stack ---- */
+    .mw-three-col {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .mw-sub-tabs {
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+        padding: 0;
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .mw-sub-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .mw-sub-tab-item {
+        flex: 0 0 auto;
+        padding: 10px 16px;
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+        font-size: 13px;
+    }
+
+    .mw-sub-tab-item::before {
+        display: none;
+    }
+
+    .mw-sub-tab-item.active {
+        border-bottom-color: #e07b39;
+    }
+
+    .mw-tab-image-col {
+        min-height: 220px;
+        height: 220px;
+    }
+
+    .mw-static-image {
+        position: relative;
+        height: 220px;
+    }
+
+    .mw-tab-right-col {
+        min-height: auto;
+    }
+
+    .mw-tab-right {
+        position: relative;
+        height: auto;
+        padding: 20px 16px;
+        top: auto;
+        left: auto;
+        right: auto;
+        bottom: auto;
+    }
+
+    .mw-item-description {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .mw-top-tab-btn {
+        font-size: 12px;
+        padding: 12px 14px;
+    }
+
+    .mw-carousel-wrapper .swiper-button-prev,
+    .mw-carousel-wrapper .swiper-button-next {
+        width: 32px;
+        height: 32px;
+    }
+
+    .mw-carousel-wrapper .swiper-button-prev::after,
+    .mw-carousel-wrapper .swiper-button-next::after {
+        font-size: 11px;
+    }
+}
+
+/* ==========================================================================
+   ELEMENTOR EDITOR — Live Preview Fixes
+   ========================================================================== */
+
+.elementor-editor-active .mw-tab-panel,
+.elementor-editor-active .mw-cat-panel,
+.elementor-editor-active .mw-tab-right,
+.elementor-editor-active .mw-static-image {
+    /* Ensure visibility in editor */
+}

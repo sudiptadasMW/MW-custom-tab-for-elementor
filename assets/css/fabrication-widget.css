@@ -173,6 +173,7 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
     position: relative;
+    margin-bottom: 15px;
 }
 
 .mw-top-tabs::-webkit-scrollbar {
@@ -185,7 +186,6 @@
     background: none;
     border: none;
     border-bottom: 3px solid transparent;
-    color: #aaaaaa;
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
@@ -193,11 +193,19 @@
     transition: color 0.25s ease, border-color 0.25s ease;
     outline: none;
     letter-spacing: 0.02em;
+    background: #ededed;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.mw-top-tab-btn:hover {
+    color: #fff !important;
+    background-color: #e07b39;
 }
 
 .mw-top-tab-btn.active {
-    color: #e07b39;
     border-bottom-color: #e07b39;
+    background-color: #e07b39;
 }
 
 .mw-top-tab-btn:hover:not(.active) {
@@ -230,8 +238,9 @@
    -------------------------------------------------------- */
 .mw-three-col {
     display: grid;
-    grid-template-columns: 220px 1fr 1fr;
+    grid-template-columns: 0.6fr 1.2fr 1fr;
     min-height: 420px;
+    gap: 15px;
 }
 
 /* --------------------------------------------------------
@@ -316,7 +325,7 @@
 }
 
 /* Static mode: direct img inside the panel */
-.mw-item-image-panel > img {
+.mw-item-image-panel>img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -363,6 +372,7 @@
 .mw-tab-right-col {
     position: relative;
     min-height: 420px;
+    background-color: #f5f5f5;
 }
 
 /* Per-item right panels — only active item's panel is visible */
@@ -579,8 +589,15 @@
     line-height: 1;
 }
 
-.mw-carousel-wrapper .swiper-button-prev::after { content: 'prev'; }
-.mw-carousel-wrapper .swiper-button-next::after { content: 'next'; }
+.mw-carousel-wrapper .swiper-button-prev::after {
+    content: '\e87e';
+    font-family: "eicons";
+}
+
+.mw-carousel-wrapper .swiper-button-next::after {
+    content: '\e87d';
+    font-family: "eicons";
+}
 
 .mw-carousel-wrapper .swiper-button-disabled {
     opacity: 0.35;
@@ -601,9 +618,9 @@
     display: inline-block;
     background: rgba(255, 255, 255, 0.6);
     opacity: 1;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+    width: 45px;
+    height: 5px;
+    border-radius: 50px;
     margin: 0 4px;
     cursor: pointer;
     transition: background 0.2s ease, transform 0.2s ease;
@@ -878,6 +895,7 @@
 .elementor-editor-active .mw-static-image {
     /* Ensure visibility in editor */
 }
+
 /* ==========================================================================
    NEW PER-ITEM PANEL — Responsive overrides
    ========================================================================== */

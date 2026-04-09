@@ -69,8 +69,23 @@ final class Plugin {
 	}
 
 	public function register_widgets( $widgets_manager ) {
-		require_once MW_CUSTOM_TAB_PATH . 'includes/widget.php';
-		$widgets_manager->register( new \MW_Custom_Tab\Widget\Fabrication_Widget() );
+		$widgets = [
+			'Fabrication_Widget',
+			// To add multiple widgets, create a new file in includes/widgets/new-widget-name.php
+			// and add the class name here, e.g., 'New_Widget_Name'
+		];
+
+		foreach ( $widgets as $widget ) {
+			// Convert class name to file name: Fabrication_Widget -> fabrication-widget.php
+			$filename = str_replace( '_', '-', strtolower( $widget ) ) . '.php';
+			$filepath = MW_CUSTOM_TAB_PATH . 'includes/widgets/' . $filename;
+
+			if ( file_exists( $filepath ) ) {
+				require_once $filepath;
+				$class_name = '\\MW_Custom_Tab\\Widget\\' . $widget;
+				$widgets_manager->register( new $class_name() );
+			}
+		}
 	}
 
 	public function enqueue_styles() {

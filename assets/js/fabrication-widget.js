@@ -277,10 +277,14 @@
        ELEMENTOR FRONTEND INTEGRATION
        ================================================================== */
     function onElementorFrontendInit() {
+        // Run on every widget ready instead of just mw_fabrication_widget to support multiple custom widgets
         elementorFrontend.hooks.addAction(
-            'frontend/element_ready/mw_fabrication_widget.default',
+            'frontend/element_ready/widget',
             function ($widget) {
-                initWidget($widget);
+                // Find our custom wrappers inside the elementor widget and initialize them
+                $widget.find('.mw-fabrication-widget').each(function() {
+                    initWidget($(this));
+                });
             }
         );
     }

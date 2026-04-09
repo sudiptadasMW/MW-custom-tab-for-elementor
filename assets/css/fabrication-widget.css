@@ -298,7 +298,32 @@
     min-height: 420px;
 }
 
-/* Static Images */
+/* Per-item image panels — only the active item's panel is visible */
+.mw-item-image-panel {
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.mw-item-image-panel.active {
+    display: block;
+    animation: mwFadeIn 0.35s ease forwards;
+}
+
+/* Static mode: direct img inside the panel */
+.mw-item-image-panel > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Legacy .mw-static-image (kept for back-compat, not used in new render) */
 .mw-static-image {
     display: none;
     width: 100%;
@@ -340,6 +365,43 @@
     min-height: 420px;
 }
 
+/* Per-item right panels — only active item's panel is visible */
+.mw-item-right-panel {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    padding: 32px 30px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+}
+
+.mw-item-right-panel.active {
+    display: flex;
+    animation: mwFadeIn 0.35s ease forwards;
+}
+
+/* Per-slide text blocks inside carousel right panels */
+.mw-slide-text {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+}
+
+.mw-slide-text.active {
+    display: flex;
+    animation: mwFadeIn 0.3s ease forwards;
+}
+
+.mw-slide-text .mw-item-description {
+    margin-bottom: 28px;
+}
+
+/* Legacy .mw-tab-right (kept for back-compat) */
 .mw-tab-right {
     display: none;
     flex-direction: column;
@@ -409,22 +471,52 @@
 
 /* ==========================================================================
    CAROUSEL (Swiper.js)
+   --------------------------------------------------------------------------
+   IMPORTANT: Swiper's CSS is not guaranteed to load on the frontend for
+   custom Elementor widgets. We embed the critical layout rules here so
+   slides never stack vertically regardless of the host theme/plugin setup.
    ========================================================================== */
 
-.mw-carousel-wrapper {
+/* --- Critical Swiper layout rules (prevents slide stacking) -------------- */
+.mw-carousel-wrapper.swiper {
+    overflow: hidden;
+    position: relative;
     width: 100%;
     height: 100%;
-    position: relative;
 }
 
 .mw-carousel-wrapper .swiper-wrapper {
+    /* MUST be flex so slides sit side-by-side, not stacked */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    width: 100%;
     height: 100%;
+    position: relative;
+    z-index: 1;
+    box-sizing: content-box;
+    -webkit-transition-property: -webkit-transform;
+    transition-property: transform;
+    will-change: transform;
 }
 
 .mw-carousel-wrapper .swiper-slide {
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
     overflow: hidden;
+    /* transition added by Swiper JS at runtime */
 }
 
+/* --- Slide images --------------------------------------------------------- */
 .mw-carousel-wrapper .swiper-slide img {
     width: 100%;
     height: 100%;
@@ -432,37 +524,88 @@
     display: block;
 }
 
+/* --- Navigation arrows ---------------------------------------------------- */
 .mw-carousel-wrapper .swiper-button-prev,
 .mw-carousel-wrapper .swiper-button-next {
+    position: absolute;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    z-index: 10;
+    cursor: pointer;
     color: #e07b39;
     width: 40px;
     height: 40px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
     background: rgba(255, 255, 255, 0.92);
     border-radius: 50%;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     transition: background 0.2s ease;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.mw-carousel-wrapper .swiper-button-prev {
+    left: 10px;
+    right: auto;
+}
+
+.mw-carousel-wrapper .swiper-button-next {
+    right: 10px;
+    left: auto;
 }
 
 .mw-carousel-wrapper .swiper-button-prev:hover,
 .mw-carousel-wrapper .swiper-button-next:hover {
-    background: rgba(255,255,255,1);
+    background: rgba(255, 255, 255, 1);
 }
 
 .mw-carousel-wrapper .swiper-button-prev::after,
 .mw-carousel-wrapper .swiper-button-next::after {
+    font-family: swiper-icons, serif;
     font-size: 14px;
     font-weight: 700;
+    text-transform: none !important;
+    letter-spacing: 0;
+    font-variant: initial;
+    line-height: 1;
 }
 
+.mw-carousel-wrapper .swiper-button-prev::after { content: 'prev'; }
+.mw-carousel-wrapper .swiper-button-next::after { content: 'next'; }
+
+.mw-carousel-wrapper .swiper-button-disabled {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+/* --- Pagination dots ------------------------------------------------------- */
 .mw-carousel-wrapper .swiper-pagination {
+    position: absolute;
     bottom: 12px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    z-index: 10;
 }
 
 .mw-carousel-wrapper .swiper-pagination-bullet {
-    background: rgba(255,255,255,0.6);
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.6);
     opacity: 1;
     width: 8px;
     height: 8px;
+    border-radius: 50%;
+    margin: 0 4px;
+    cursor: pointer;
     transition: background 0.2s ease, transform 0.2s ease;
 }
 
@@ -480,6 +623,7 @@
         opacity: 0;
         transform: translateY(6px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -733,4 +877,46 @@
 .elementor-editor-active .mw-tab-right,
 .elementor-editor-active .mw-static-image {
     /* Ensure visibility in editor */
+}
+/* ==========================================================================
+   NEW PER-ITEM PANEL — Responsive overrides
+   ========================================================================== */
+
+/* Tablet */
+@media (max-width: 768px) {
+    .mw-item-right-panel {
+        position: relative;
+        height: auto;
+        padding: 24px 20px;
+    }
+
+    .mw-item-image-panel {
+        position: relative;
+        min-height: 280px;
+        height: 280px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 576px) {
+    .mw-item-image-panel {
+        position: relative;
+        height: 220px;
+        min-height: 220px;
+    }
+
+    .mw-item-right-panel {
+        position: relative;
+        height: auto;
+        padding: 20px 16px;
+        top: auto;
+        left: auto;
+        right: auto;
+        bottom: auto;
+    }
+
+    .mw-slide-text .mw-item-description {
+        font-size: 14px;
+        margin-bottom: 16px;
+    }
 }

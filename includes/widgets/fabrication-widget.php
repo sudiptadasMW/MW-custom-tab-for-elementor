@@ -301,6 +301,28 @@ class Fabrication_Widget extends Widget_Base
 			'dynamic' => ['active' => true],
 		]);
 
+		$slide_repeater = new Repeater();
+
+		$slide_repeater->add_control('slide_image', [
+			'label' => esc_html__('Slide Image', 'mw-custom-tab'),
+			'type' => Controls_Manager::MEDIA,
+			'default' => ['url' => Utils::get_placeholder_image_src()],
+			'dynamic' => ['active' => true],
+		]);
+
+		$slide_repeater->add_control('slide_description', [
+			'label' => esc_html__('Slide Description', 'mw-custom-tab'),
+			'type' => Controls_Manager::WYSIWYG,
+			'default' => esc_html__('Slide content description...', 'mw-custom-tab'),
+		]);
+
+		$item_repeater->add_control('item_slides', [
+			'label' => esc_html__('Dedicated Item Slides', 'mw-custom-tab'),
+			'type' => Controls_Manager::REPEATER,
+			'fields' => $slide_repeater->get_controls(),
+			'title_field' => 'Slide',
+		]);
+
 		$this->add_control('style_two_items', [
 			'label' => esc_html__('Items', 'mw-custom-tab'),
 			'type' => Controls_Manager::REPEATER,
@@ -878,13 +900,16 @@ class Fabrication_Widget extends Widget_Base
 
 	// -----------------------------------------------------------
 	// STYLE TWO RENDER
+	// Each item = one vertical tab (left col).
+	// Each item owns its own slider (middle col = images, right col = text).
+	// Clicking a sub-tab swaps middle + right; slider nav only changes slides within that item.
 	// -----------------------------------------------------------
 	private function render_style_two(array $settings)
 	{
-		$categories = $settings['style_two_categories'];
-		$items = $settings['style_two_items'];
+		$categories   = $settings['style_two_categories'];
+		$items        = $settings['style_two_items'];
 		$display_type = $settings['content_display_type'];
-		$widget_id = $this->get_id();
+		$widget_id    = $this->get_id();
 
 		if (empty($categories)) {
 			echo '<p class="mw-empty-notice">' . esc_html__('Please add at least one category.', 'mw-custom-tab') . '</p>';
@@ -895,7 +920,7 @@ class Fabrication_Widget extends Widget_Base
 		$grouped = [];
 		if (!empty($items)) {
 			foreach ($items as $item) {
-				$cat_idx = isset($item['item_category_index']) ? absint($item['item_category_index']) : 0;
+				$cat_idx              = isset($item['item_category_index']) ? absint($item['item_category_index']) : 0;
 				$grouped[$cat_idx][] = $item;
 			}
 		}
@@ -907,10 +932,11 @@ class Fabrication_Widget extends Widget_Base
 				aria-label="<?php esc_attr_e('Category tabs', 'mw-custom-tab'); ?>">
 				<?php foreach ($categories as $cat_index => $cat):
 					$is_active = (0 === $cat_index);
-					$cat_id = 'mw-s2-cat-' . $widget_id . '-' . $cat_index;
+					$cat_id    = 'mw-s2-cat-' . $widget_id . '-' . $cat_index;
 					?>
 					<button class="mw-top-tab-btn<?php echo $is_active ? ' active' : ''; ?>" role="tab"
-						id="<?php echo esc_attr($cat_id); ?>" aria-selected="<?php echo $is_active ? 'true' : 'false'; ?>"
+						id="<?php echo esc_attr($cat_id); ?>"
+						aria-selected="<?php echo $is_active ? 'true' : 'false'; ?>"
 						aria-controls="<?php echo esc_attr($cat_id . '-panel'); ?>"
 						data-cat-index="<?php echo esc_attr($cat_index); ?>">
 						<?php echo esc_html($cat['category_name']); ?>
@@ -921,13 +947,15 @@ class Fabrication_Widget extends Widget_Base
 			<!-- Category Panels -->
 			<div class="mw-cat-panels">
 				<?php foreach ($categories as $cat_index => $cat):
-					$is_active = (0 === $cat_index);
-					$cat_id = 'mw-s2-cat-' . $widget_id . '-' . $cat_index;
-					$cat_items = isset($grouped[$cat_index]) ? $grouped[$cat_index] : [];
+					$is_active  = (0 === $cat_index);
+					$cat_id     = 'mw-s2-cat-' . $widget_id . '-' . $cat_index;
+					$cat_items  = isset($grouped[$cat_index]) ? $grouped[$cat_index] : [];
 					?>
 					<div class="mw-cat-panel<?php echo $is_active ? ' active' : ''; ?>"
-						id="<?php echo esc_attr($cat_id . '-panel'); ?>" role="tabpanel"
-						aria-labelledby="<?php echo esc_attr($cat_id); ?>" data-cat-index="<?php echo esc_attr($cat_index); ?>"
+						id="<?php echo esc_attr($cat_id . '-panel'); ?>"
+						role="tabpanel"
+						aria-labelledby="<?php echo esc_attr($cat_id); ?>"
+						data-cat-index="<?php echo esc_attr($cat_index); ?>"
 						data-display="<?php echo esc_attr($display_type); ?>">
 
 						<?php if (empty($cat_items)): ?>
@@ -935,13 +963,14 @@ class Fabrication_Widget extends Widget_Base
 						<?php else: ?>
 							<div class="mw-three-col">
 
-								<!-- LEFT: Vertical Sub Tabs -->
+								<!-- LEFT COL: Vertical item tabs (unchanged — items are tabs, not slides) -->
 								<nav class="mw-sub-tabs" role="tablist" aria-orientation="vertical">
 									<?php foreach ($cat_items as $item_index => $item):
 										$is_first = (0 === $item_index);
-										$item_id = 'mw-s2-item-' . $widget_id . '-c' . $cat_index . '-i' . $item_index;
+										$item_id  = 'mw-s2-item-' . $widget_id . '-c' . $cat_index . '-i' . $item_index;
 										?>
-										<div class="mw-sub-tab-item<?php echo $is_first ? ' active' : ''; ?>" role="tab"
+										<div class="mw-sub-tab-item<?php echo $is_first ? ' active' : ''; ?>"
+											role="tab"
 											id="<?php echo esc_attr($item_id); ?>"
 											aria-selected="<?php echo $is_first ? 'true' : 'false'; ?>"
 											aria-controls="<?php echo esc_attr($item_id . '-content'); ?>"
@@ -952,98 +981,141 @@ class Fabrication_Widget extends Widget_Base
 									<?php endforeach; ?>
 								</nav>
 
-								<!-- MIDDLE: Image Column -->
+								<!-- MIDDLE COL: Per-item image panels. Each item owns its own carousel or static image. -->
 								<div class="mw-tab-image-col">
-									<?php if ('carousel' === $display_type): ?>
-										<div class="mw-carousel-wrapper swiper" data-cat="<?php echo esc_attr($cat_index); ?>">
-											<div class="swiper-wrapper">
-												<?php foreach ($cat_items as $item_index => $item):
-													$img_url = !empty($item['item_image']['url']) ? $item['item_image']['url'] : '';
-													$img_id = !empty($item['item_image']['id']) ? $item['item_image']['id'] : 0;
-													$img_alt = !empty($item['item_image']['alt']) ? $item['item_image']['alt'] : esc_attr($item['item_title']);
-													?>
-													<div class="swiper-slide">
-														<?php if ($img_url):
-															if ($img_id) {
-																echo wp_get_attachment_image($img_id, 'large', false, [
-																	'alt' => $img_alt,
-																	'loading' => 'lazy',
-																]);
-															} else { ?>
-																<img src="<?php echo esc_url($img_url); ?>" alt="<?php echo esc_attr($img_alt); ?>"
-																	loading="lazy" />
-															<?php }
-														else: ?>
-															<div class="mw-placeholder-img"></div>
-														<?php endif; ?>
+									<?php foreach ($cat_items as $item_index => $item):
+										$is_first = (0 === $item_index);
+										?>
+										<div class="mw-item-image-panel<?php echo $is_first ? ' active' : ''; ?>"
+											data-item-index="<?php echo esc_attr($item_index); ?>">
+
+											<?php if ('carousel' === $display_type):
+												// Each item has its own Swiper with its own slides from item_slides repeater
+												$slides    = !empty($item['item_slides']) ? $item['item_slides'] : [];
+												$swiper_id = 'mw-swiper-' . $widget_id . '-c' . $cat_index . '-i' . $item_index;
+												if (!empty($slides)): ?>
+													<div class="mw-carousel-wrapper swiper"
+														id="<?php echo esc_attr($swiper_id); ?>"
+														data-cat="<?php echo esc_attr($cat_index); ?>"
+														data-item="<?php echo esc_attr($item_index); ?>">
+														<div class="swiper-wrapper">
+															<?php foreach ($slides as $slide_index => $slide):
+																$img_url = !empty($slide['slide_image']['url']) ? $slide['slide_image']['url'] : '';
+																$img_id  = !empty($slide['slide_image']['id'])  ? $slide['slide_image']['id']  : 0;
+																$img_alt = !empty($slide['slide_image']['alt']) ? $slide['slide_image']['alt'] : esc_attr($item['item_title']);
+																?>
+																<div class="swiper-slide" data-slide-index="<?php echo esc_attr($slide_index); ?>">
+																	<?php if ($img_url):
+																		if ($img_id) {
+																			echo wp_get_attachment_image($img_id, 'large', false, [
+																				'alt'     => $img_alt,
+																				'loading' => 'lazy',
+																			]);
+																		} else { ?>
+																			<img src="<?php echo esc_url($img_url); ?>"
+																				alt="<?php echo esc_attr($img_alt); ?>"
+																				loading="lazy" />
+																		<?php }
+																	else: ?>
+																		<div class="mw-placeholder-img"></div>
+																	<?php endif; ?>
+																</div>
+															<?php endforeach; ?>
+														</div>
+														<div class="swiper-pagination"></div>
+														<div class="swiper-button-prev"></div>
+														<div class="swiper-button-next"></div>
 													</div>
-												<?php endforeach; ?>
-											</div>
-											<div class="swiper-pagination"></div>
-											<div class="swiper-button-prev"></div>
-											<div class="swiper-button-next"></div>
-										</div>
-									<?php else: ?>
-										<?php foreach ($cat_items as $item_index => $item):
-											$is_first = (0 === $item_index);
-											$img_url = !empty($item['item_image']['url']) ? $item['item_image']['url'] : '';
-											$img_id = !empty($item['item_image']['id']) ? $item['item_image']['id'] : 0;
-											$img_alt = !empty($item['item_image']['alt']) ? $item['item_image']['alt'] : esc_attr($item['item_title']);
-											?>
-											<div class="mw-static-image<?php echo $is_first ? ' active' : ''; ?>"
-												data-item-index="<?php echo esc_attr($item_index); ?>">
-												<?php if ($img_url):
+												<?php else: ?>
+													<div class="mw-placeholder-img"><?php esc_html_e('No slides added.', 'mw-custom-tab'); ?></div>
+												<?php endif; ?>
+
+											<?php else:
+												// Static mode: one image per item
+												$img_url = !empty($item['item_image']['url']) ? $item['item_image']['url'] : '';
+												$img_id  = !empty($item['item_image']['id'])  ? $item['item_image']['id']  : 0;
+												$img_alt = !empty($item['item_image']['alt']) ? $item['item_image']['alt'] : esc_attr($item['item_title']);
+												if ($img_url):
 													if ($img_id) {
 														echo wp_get_attachment_image($img_id, 'large', false, [
-															'alt' => $img_alt,
+															'alt'     => $img_alt,
 															'loading' => 'lazy',
 														]);
 													} else { ?>
-														<img src="<?php echo esc_url($img_url); ?>" alt="<?php echo esc_attr($img_alt); ?>"
+														<img src="<?php echo esc_url($img_url); ?>"
+															alt="<?php echo esc_attr($img_alt); ?>"
 															loading="lazy" />
 													<?php }
 												else: ?>
 													<div class="mw-placeholder-img"><?php esc_html_e('No image set', 'mw-custom-tab'); ?></div>
 												<?php endif; ?>
-											</div>
-										<?php endforeach; ?>
-									<?php endif; ?>
-								</div>
+											<?php endif; ?>
 
-								<!-- RIGHT: Text + Button -->
+										</div><!-- .mw-item-image-panel -->
+									<?php endforeach; ?>
+								</div><!-- .mw-tab-image-col -->
+
+								<!-- RIGHT COL: Per-item text panels. Carousel mode: text switches with each slide. -->
 								<div class="mw-tab-right-col">
 									<?php foreach ($cat_items as $item_index => $item):
-										$is_first = (0 === $item_index);
-										$item_id = 'mw-s2-item-' . $widget_id . '-c' . $cat_index . '-i' . $item_index;
-										$btn_text = !empty($item['item_button_text']) ? $item['item_button_text'] : '';
-										$btn_url = !empty($item['item_button_link']['url']) ? $item['item_button_link']['url'] : '#';
+										$is_first    = (0 === $item_index);
+										$item_id     = 'mw-s2-item-' . $widget_id . '-c' . $cat_index . '-i' . $item_index;
+										$btn_text    = !empty($item['item_button_text']) ? $item['item_button_text'] : '';
+										$btn_url     = !empty($item['item_button_link']['url']) ? $item['item_button_link']['url'] : '#';
 										$is_external = !empty($item['item_button_link']['is_external']);
-										$nofollow = !empty($item['item_button_link']['nofollow']);
+										$nofollow    = !empty($item['item_button_link']['nofollow']);
+
+										// Build button attributes safely
+										$btn_target = $is_external ? '_blank' : '_self';
+										$btn_rel    = '';
+										if ($is_external) {
+											$btn_rel = 'noopener' . ($nofollow ? ' nofollow' : '');
+										} elseif ($nofollow) {
+											$btn_rel = 'nofollow';
+										}
 										?>
-										<div class="mw-tab-right<?php echo $is_first ? ' active' : ''; ?>"
-											id="<?php echo esc_attr($item_id . '-content'); ?>" role="tabpanel"
+										<div class="mw-item-right-panel<?php echo $is_first ? ' active' : ''; ?>"
+											id="<?php echo esc_attr($item_id . '-content'); ?>"
+											role="tabpanel"
 											aria-labelledby="<?php echo esc_attr($item_id); ?>"
 											data-item-index="<?php echo esc_attr($item_index); ?>">
-											<div class="mw-item-description">
-												<?php echo wp_kses_post($item['item_description']); ?>
-											</div>
-											<?php if ($btn_text):
-												$btn_attrs = 'class="mw-item-btn"';
-												$btn_attrs .= ' href="' . esc_url($btn_url) . '"';
-												$btn_attrs .= ' target="' . ($is_external ? '_blank' : '_self') . '"';
-												if ($is_external) {
-													$btn_attrs .= ' rel="noopener' . ($nofollow ? ' nofollow' : '') . '"';
-												} elseif ($nofollow) {
-													$btn_attrs .= ' rel="nofollow"';
-												}
-												?>
-												<a <?php echo $btn_attrs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>>
+
+											<?php if ('carousel' === $display_type):
+												// Each slide gets its own text block — JS will show/hide on slide change
+												$slides = !empty($item['item_slides']) ? $item['item_slides'] : [];
+												foreach ($slides as $slide_index => $slide):
+													$is_first_slide = (0 === $slide_index);
+													?>
+													<div class="mw-slide-text<?php echo $is_first_slide ? ' active' : ''; ?>"
+														data-slide-index="<?php echo esc_attr($slide_index); ?>">
+														<div class="mw-item-description">
+															<?php echo wp_kses_post($slide['slide_description']); ?>
+														</div>
+													</div>
+												<?php endforeach;
+												if (empty($slides)): ?>
+													<p class="mw-empty-notice"><?php esc_html_e('No slides added.', 'mw-custom-tab'); ?></p>
+												<?php endif; ?>
+
+											<?php else:
+												// Static mode: item-level description ?>
+												<div class="mw-item-description">
+													<?php echo wp_kses_post($item['item_description']); ?>
+												</div>
+											<?php endif; ?>
+
+											<?php if ($btn_text): ?>
+												<a class="mw-item-btn"
+													href="<?php echo esc_url($btn_url); ?>"
+													target="<?php echo esc_attr($btn_target); ?>"
+													<?php if ($btn_rel): ?>rel="<?php echo esc_attr($btn_rel); ?>"<?php endif; ?>>
 													<?php echo esc_html($btn_text); ?>
 												</a>
 											<?php endif; ?>
-										</div>
+
+										</div><!-- .mw-item-right-panel -->
 									<?php endforeach; ?>
-								</div>
+								</div><!-- .mw-tab-right-col -->
 
 							</div><!-- .mw-three-col -->
 						<?php endif; ?>

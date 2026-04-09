@@ -89,6 +89,9 @@ final class Plugin {
 	}
 
 	public function enqueue_styles() {
+		// Our CSS bundles the critical Swiper layout rules so the carousel
+		// renders correctly on the frontend even if the theme does not load
+		// Elementor's full asset bundle (which normally includes Swiper CSS).
 		wp_enqueue_style(
 			'mw-custom-tab',
 			MW_CUSTOM_TAB_URL . 'assets/css/fabrication-widget.css',
@@ -98,10 +101,15 @@ final class Plugin {
 	}
 
 	public function register_scripts() {
+		// Use Elementor's bundled swiper handle if available, otherwise fall
+		// back to the generic 'swiper' handle (registered by some themes/plugins).
+		// The JS itself checks typeof Swiper before calling new Swiper().
+		$swiper_handle = wp_script_is( 'swiper', 'registered' ) ? 'swiper' : 'jquery';
+
 		wp_register_script(
 			'mw-custom-tab',
 			MW_CUSTOM_TAB_URL . 'assets/js/fabrication-widget.js',
-			[ 'jquery', 'swiper' ],
+			[ 'jquery', $swiper_handle ],
 			MW_CUSTOM_TAB_VERSION,
 			true
 		);

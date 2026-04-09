@@ -424,6 +424,14 @@ class Fabrication_Widget extends Widget_Base
 			],
 		]);
 
+		$this->add_control('active_nav_bg_color', [
+			'label' => esc_html__('Active Nav Background', 'mw-custom-tab'),
+			'type' => Controls_Manager::COLOR,
+			'selectors' => [
+				'{{WRAPPER}} .mw-sub-tabs .mw-sub-tab-item.active' => 'background-color: {{VALUE}};',
+			],
+		]);
+
 		$this->start_controls_tabs('nav_tabs_style');
 
 		$this->start_controls_tab('nav_normal_tab', [

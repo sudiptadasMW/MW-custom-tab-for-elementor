@@ -252,7 +252,7 @@
    -------------------------------------------------------- */
 .mw-three-col {
     display: grid;
-    grid-template-columns: 0.6fr 1.2fr 1fr;
+    grid-template-columns: 0.8fr 1.2fr 0.8fr;
     min-height: 420px;
     gap: 15px;
 }
@@ -261,8 +261,6 @@
    LEFT: Sub Tabs
    -------------------------------------------------------- */
 .mw-sub-tabs {
-    background-color: #f7f7f7;
-    border-right: 1px solid #e8e8e8;
     padding: 20px 0;
 }
 
@@ -812,6 +810,11 @@
 .mw-carousel-controls-bar {
     padding: 15px;
 }
+
+.mw-sub-tab-item.active {
+    font-weight: 500 !important;
+    color: #4e4e4e !important;
+}
 /* ==========================================================================
    ANIMATIONS
    ========================================================================== */
@@ -1101,6 +1104,13 @@
 
 /* Mobile */
 @media (max-width: 576px) {
+    .mw-sub-tabs{
+        padding-top: 10px !important;
+        flex-direction: column !important;
+    }
+    .mw-sub-tabs .mw-sub-tab-item{
+        font-size: 16px !important;
+    }
     .mw-item-image-panel {
         position: relative;
         height: 220px;

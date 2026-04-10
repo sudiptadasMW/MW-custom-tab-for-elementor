@@ -84,42 +84,127 @@
         var $topBtns   = $widget.find('.mw-top-tab-btn');
         var $catPanels = $widget.find('.mw-cat-panel');
 
-        if (!$topBtns.length) return;
+        if (!$topBtns.length && !$catPanels.length) return;
 
-        /* Init first visible panel immediately */
-        var $firstPanel = $catPanels.filter('.active').first();
-        if ($firstPanel.length) {
-            initPanel($firstPanel, display, $widget);
-        }
-
-        /* Top category tab click */
+        /* ---- Desktop: top tab click (unchanged) ---- */
         $topBtns.on('click', function () {
             var $this    = $(this);
             var catIndex = $this.data('cat-index');
 
             $topBtns.removeClass('active').attr('aria-selected', 'false');
             $catPanels.removeClass('active');
-
             $this.addClass('active').attr('aria-selected', 'true');
 
             var $activePanel = $catPanels.filter('[data-cat-index="' + catIndex + '"]');
             $activePanel.addClass('active');
-
             initPanel($activePanel, display, $widget);
         });
 
-        /* Horizontal keyboard nav — top bar */
         $topBtns.on('keydown', function (e) {
             var $items = $topBtns;
             var curIdx = $items.index($(this));
             var target = -1;
-
             if (e.key === 'ArrowRight') { e.preventDefault(); target = (curIdx + 1) % $items.length; }
             else if (e.key === 'ArrowLeft') { e.preventDefault(); target = (curIdx - 1 + $items.length) % $items.length; }
             else if (e.key === 'Home') { e.preventDefault(); target = 0; }
             else if (e.key === 'End') { e.preventDefault(); target = $items.length - 1; }
-
             if (target >= 0) { $items.eq(target).trigger('click').focus(); }
+        });
+
+        /* ---- Mobile accordion: build headers + handle clicks ---- */
+        function isMobile() {
+            return window.innerWidth <= 576;
+        }
+
+        function buildAccordions() {
+            /* Only run once */
+            if ($widget.data('mw-accordion-built')) return;
+            $widget.data('mw-accordion-built', true);
+
+            $catPanels.each(function () {
+                var $panel    = $(this);
+                var catIndex  = $panel.data('cat-index');
+
+                /* Find the matching category name from the top tab button */
+                var catName = $widget
+                    .find('.mw-top-tab-btn[data-cat-index="' + catIndex + '"]')
+                    .text().trim();
+
+                /* Wrap the existing panel content in .mw-accordion-body */
+                $panel.wrapInner('<div class="mw-accordion-body"></div>');
+
+                /* Prepend the accordion header */
+                var $header = $(
+                    '<div class="mw-accordion-header" role="button" tabindex="0" aria-expanded="false">' +
+                    '<span class="mw-accordion-title">' + catName + '</span>' +
+                    '<svg class="mw-accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+                    '<polyline points="6 9 12 15 18 9"></polyline>' +
+                    '</svg>' +
+                    '</div>'
+                );
+                $panel.prepend($header);
+            });
+
+            /* Click handler for accordion headers */
+            $widget.find('.mw-accordion-header').on('click keydown', function (e) {
+                if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
+                e.preventDefault();
+
+                var $header   = $(this);
+                var $panel    = $header.closest('.mw-cat-panel');
+                var $body     = $panel.find('.mw-accordion-body').first();
+                var isOpen    = $body.hasClass('open');
+
+                /* Close all */
+                $widget.find('.mw-accordion-header').removeClass('active').attr('aria-expanded', 'false');
+                $widget.find('.mw-accordion-body').removeClass('open');
+
+                /* Open this one if it was closed */
+                if (!isOpen) {
+                    $header.addClass('active').attr('aria-expanded', 'true');
+                    $body.addClass('open');
+
+                    /* Init sub-tabs + Swiper for this panel now that it's visible */
+                    initPanel($panel, display, $widget);
+
+                    /* Also refresh any already-created Swipers inside */
+                    $panel.find('.mw-carousel-wrapper').each(function () {
+                        var $c        = $(this);
+                        var itemIndex = parseInt($c.closest('.mw-item-image-panel').data('item-index'), 10);
+                        var catIndex  = $panel.data('cat-index');
+                        var widgetId  = $widget.attr('id') || 'mw-widget';
+                        var key       = widgetId + '-cat-' + catIndex + '-item-' + itemIndex;
+                        if (MWSwipers[key]) { MWSwipers[key].update(); }
+                    });
+                }
+            });
+
+            /* Open first accordion by default */
+            $widget.find('.mw-accordion-header').first().trigger('click');
+        }
+
+        /* ---- Responsive switch ---- */
+        function applyResponsiveMode() {
+            if (isMobile()) {
+                buildAccordions();
+            } else {
+                /* Desktop: init first active panel normally */
+                var $firstPanel = $catPanels.filter('.active').first();
+                if ($firstPanel.length) {
+                    initPanel($firstPanel, display, $widget);
+                }
+            }
+        }
+
+        applyResponsiveMode();
+
+        /* Re-evaluate on resize (debounced) */
+        var resizeTimer;
+        $(window).on('resize.mwFab', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function () {
+                applyResponsiveMode();
+            }, 150);
         });
     }
 

@@ -61,6 +61,7 @@
     line-height: 1.4;
     user-select: none;
     outline: none;
+    transition: padding-left 0.3s ease; 
 }
 
 .mw-tab-nav-item::before {
@@ -179,7 +180,7 @@
    -------------------------------------------------------- */
 .mw-top-tabs {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     overflow-x: auto;
     background-color: #1a1a1a;
     scrollbar-width: none;
@@ -644,6 +645,173 @@
     transform: scale(1.3);
 }
 
+
+/* --- Controls bar: sits BELOW the image slide area ----------------------- */
+/* The wrapper becomes a flex column so controls are outside the image */
+.mw-carousel-wrapper.swiper {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    overflow: visible; /* allow controls bar to render below */
+}
+
+/* Slide area takes all remaining height */
+.mw-carousel-wrapper .swiper-wrapper {
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+/* Controls bar: pagination LEFT, nav buttons RIGHT */
+.mw-carousel-controls-bar {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 14px 0 0 0;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+    gap: 12px;
+}
+
+/* --- Navigation arrows — square boxes on the right ----------------------- */
+.mw-carousel-wrapper .swiper-nav-group {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    gap: 10px;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+}
+
+.mw-carousel-wrapper .swiper-button-prev,
+.mw-carousel-wrapper .swiper-button-next {
+    position: static;           /* pulled OUT of the slide image */
+    -webkit-transform: none;
+    transform: none;
+    top: auto;
+    left: auto;
+    right: auto;
+    z-index: 1;
+    cursor: pointer;
+    color: #F15A29;
+    width: 52px;
+    height: 52px;
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 2px solid #F15A29;
+    border-radius: 0;           /* square */
+    box-shadow: none;
+    transition: background 0.2s ease, color 0.2s ease;
+    -webkit-user-select: none;
+    user-select: none;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+}
+
+.mw-carousel-wrapper .swiper-button-prev:hover,
+.mw-carousel-wrapper .swiper-button-next:hover {
+    background: #F15A29;
+    color: #ffffff;
+}
+
+.mw-carousel-wrapper .swiper-button-prev::after,
+.mw-carousel-wrapper .swiper-button-next::after {
+    font-family: swiper-icons, serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: none !important;
+    letter-spacing: 0;
+    font-variant: initial;
+    line-height: 1;
+}
+
+.mw-carousel-wrapper .swiper-button-prev:hover::after, .mw-carousel-wrapper .swiper-button-next:hover::after{
+    color: #ffffff;
+}
+
+.mw-carousel-wrapper .swiper-button-prev::after { 
+    content: '\e8bf'; 
+    font-family: "eicons";
+}
+.mw-carousel-wrapper .swiper-button-next::after { 
+    content: '\e8c0'; 
+    font-family: "eicons";
+}
+
+.mw-carousel-wrapper .swiper-button-disabled {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+/* --- Pagination dots — left side ----------------------------------------- */
+.mw-carousel-wrapper .swiper-pagination {
+    position: static;           /* pulled OUT of the slide image */
+    width: auto;
+    text-align: left;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    gap: 12px;
+}
+
+.mw-carousel-wrapper .swiper-pagination-bullet {
+    display: inline-block;
+    background: #ddd;
+    opacity: 1;
+    width: 48px;
+    height: 6px;
+    border-radius: 3px;
+    margin: 0;
+    cursor: pointer;
+    transition: background 0.25s ease, width 0.25s ease;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+}
+
+.mw-carousel-wrapper .swiper-pagination-bullet-active {
+    background: #F15A29;
+    width: 48px;
+}
+
+
+@media (max-width: 576px){
+    .mw-carousel-wrapper .swiper-button-prev,
+    .mw-carousel-wrapper .swiper-button-next {
+        width: 40px;
+        height: 40px;
+    }
+    .mw-carousel-wrapper .swiper-pagination-bullet { width: 22px; }
+    .mw-carousel-wrapper .swiper-pagination-bullet-active { width: 34px; }
+}
+
+.mw-carousel-controls-bar {
+    padding: 15px;
+}
 /* ==========================================================================
    ANIMATIONS
    ========================================================================== */
@@ -829,6 +997,9 @@
         overflow-x: auto;
         scrollbar-width: none;
         -ms-overflow-style: none;
+        justify-content: center;
+        flex-wrap: wrap;
+        padding: 10px;
     }
 
     .mw-sub-tabs::-webkit-scrollbar {
@@ -950,4 +1121,154 @@
         font-size: 14px;
         margin-bottom: 16px;
     }
+
+    /* ---- Style Two — Mobile Accordion ---- */
+
+    /* Hide the dark horizontal tab bar entirely on mobile */
+    .mw-layout-style_two .mw-top-tabs {
+        display: none;
+    }
+
+    /* All category panels are visible as stacked accordion items */
+    .mw-cat-panel {
+        display: block !important;
+        animation: none !important;
+    }
+
+    /* Each category panel becomes an accordion card */
+    .mw-cat-panel {
+        border-bottom: 1px solid #e0e0e0;
+        overflow: hidden;
+    }
+
+    /* Accordion header — generated via a pseudo wrapper we add with JS */
+    .mw-accordion-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 16px;
+        background-color: #f5f5f5;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+        user-select: none;
+        border-left: 4px solid transparent;
+        transition: background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .mw-accordion-header.active {
+        background-color: #e07b39;
+        color: #fff;
+        border-left-color: #c56020;
+    }
+
+    .mw-accordion-header .mw-accordion-chevron {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        transition: transform 0.25s ease;
+    }
+
+    .mw-accordion-header.active .mw-accordion-chevron {
+        transform: rotate(180deg);
+    }
+
+    /* Accordion body — collapsed by default, expanded when active */
+    .mw-accordion-body {
+        display: none;
+        padding: 0;
+    }
+
+    .mw-accordion-body.open {
+        display: block;
+    }
+
+    /* Inside the accordion body, stack the three columns vertically */
+    .mw-three-col {
+        display: flex !important;
+        flex-direction: column;
+        grid-template-columns: unset;
+        min-height: unset;
+    }
+
+    /* Sub-tabs: horizontal scrollable row */
+    .mw-sub-tabs {
+        order: 1;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+        padding: 0;
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        background: #fafafa;
+    }
+
+    .mw-sub-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .mw-sub-tab-item {
+        flex: 0 0 auto;
+        padding: 10px 16px;
+        border-left: none;
+        border-bottom: 3px solid transparent;
+        white-space: nowrap;
+        font-size: 13px;
+    }
+
+    .mw-sub-tab-item::before {
+        display: none;
+    }
+
+    .mw-sub-tab-item.active {
+        border-bottom-color: #e07b39;
+        color: #e07b39;
+    }
+
+    /* Image column: second */
+    .mw-tab-image-col {
+        order: 2;
+        min-height: 220px;
+        height: 220px;
+    }
+
+    .mw-item-image-panel {
+        position: relative;
+        height: 220px;
+        min-height: 220px;
+    }
+
+    /* Right column: third */
+    .mw-tab-right-col {
+        order: 3;
+        min-height: auto;
+    }
+
+    .mw-item-right-panel {
+        position: relative;
+        height: auto;
+        padding: 16px;
+        top: auto;
+        left: auto;
+        right: auto;
+        bottom: auto;
+    }
+
+    .mw-item-description {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    /* Carousel controls smaller on mobile */
+    .mw-carousel-wrapper .swiper-button-prev,
+    .mw-carousel-wrapper .swiper-button-next {
+        width: 40px;
+        height: 40px;
+    }
+
+    .mw-carousel-wrapper .swiper-pagination-bullet { width: 22px; }
+    .mw-carousel-wrapper .swiper-pagination-bullet-active { width: 34px; }
 }

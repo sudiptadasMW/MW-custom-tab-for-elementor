@@ -267,7 +267,7 @@
 .mw-sub-tab-item {
     position: relative;
     display: block;
-    padding: 13px 18px 13px 26px;
+    padding: 13px 18px 13px 0;
     font-size: 14px;
     font-weight: 500;
     color: #555555;
@@ -277,6 +277,7 @@
     line-height: 1.4;
     user-select: none;
     outline: none;
+    transition: padding-left 0.3s ease;
 }
 
 .mw-sub-tab-item::before {
@@ -690,6 +691,9 @@
     gap: 10px;
     -ms-flex-negative: 0;
     flex-shrink: 0;
+    position: absolute !important;
+    right: 10px !important;
+    bottom: 10px !important;
 }
 
 .mw-carousel-wrapper .swiper-button-prev,
@@ -809,6 +813,8 @@
 
 .mw-carousel-controls-bar {
     padding: 15px;
+    position: relative !important;
+    height: 80px;
 }
 
 .mw-sub-tab-item.active {
@@ -1281,4 +1287,17 @@
 
     .mw-carousel-wrapper .swiper-pagination-bullet { width: 22px; }
     .mw-carousel-wrapper .swiper-pagination-bullet-active { width: 34px; }
+}
+
+.mw-sub-tab-item.active{
+    padding-left: 20px;
+}
+
+.mw-sub-tab-item:hover {
+    background-color: #e1e1e1;
+    padding-left: 20px;
+}
+
+.mw-sub-tab-item:hover::before {
+    background-color: #F15A29;
 }

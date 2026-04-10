@@ -80,6 +80,18 @@
     font-weight: 600;
 }
 
+.mw-tab-nav-item:hover, .mw-tab-nav-item.active {
+    padding-left: 20px !important;
+}
+
+.mw-tab-nav-item:hover::before{
+    background-color: #F15A29;
+}
+
+.mw-tab-nav-item:hover{
+    background-color: #F5F5F5;
+}
+
 .mw-tab-nav-item.active::before {
     background-color: #F15A29;
 }
